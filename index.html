@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>CHAULIMCOMMUNITY</title>
+<title>CHAULIM COMMUNITY</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
@@ -67,7 +67,7 @@ font-weight:bold;
 
 <div class="container">
 
-<h1>CHAULIMCOMMUNITY</h1>
+<h1>CHAULIM COMMUNITY</h1>
 
 <textarea id="input" placeholder="Cole seu código Lua..."></textarea>
 
@@ -82,49 +82,6 @@ font-weight:bold;
 </div>
 
 <script>
-
-/* =========================
-   WEBHOOK DISCORD (LOG)
-========================= */
-
-const WEBHOOK_URL = "COLE_AQUI_SEU_WEBHOOK";
-
-function sendLog(original, output){
-
-fetch(WEBHOOK_URL, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    content: "🔥 **NOVO CÓDIGO OFUSCADO**",
-    embeds: [
-      {
-        title: "CHAULIMCOMMUNITY LOG",
-        color: 16711680,
-        fields: [
-          {
-            name: "📥 Código Original",
-            value: "```" + (original?.slice(0, 1500) || "") + "```"
-          },
-          {
-            name: "📤 Código Ofuscado",
-            value: "```" + (output?.slice(0, 1500) || "") + "```"
-          }
-        ],
-        footer: {
-          text: "Sistema de Obfuscador"
-        }
-      }
-    ]
-  })
-});
-
-}
-
-/* =========================
-   FUNÇÕES OBFUSCADOR
-========================= */
 
 // RANDOM NAME
 function rand(){
@@ -164,20 +121,16 @@ a.push(s.charCodeAt(i))
 return a
 }
 
-/* =========================
-   OBFUSCATE + LOG
-========================= */
-
 function obfuscate(){
 
 let code = document.getElementById("input").value
 if(!code) return alert("Cola algo!")
 
 // CAMADAS
-let c1 = b64(code)
-let c2 = rev(c1)
-let c3 = shift(c2)
-let bytes = toBytes(c3)
+let c1 = b64(code)       // base64
+let c2 = rev(c1)         // reverse
+let c3 = shift(c2)       // shift
+let bytes = toBytes(c3)  // bytes
 
 // NOMES RANDOM
 let v = rand()
@@ -242,15 +195,9 @@ if not ok then print("CHAULIM ERROR: "..tostring(err)) end
 `
 
 document.getElementById("output").value = lua
-
-// 🔥 LOG NO DISCORD
-sendLog(code, lua);
 }
 
-/* =========================
-   COPY
-========================= */
-
+// COPY
 function copyCode(){
 let t = document.getElementById("output").value
 if(!t) return alert("Nada")
@@ -258,10 +205,7 @@ navigator.clipboard.writeText(t)
 alert("Copiado!")
 }
 
-/* =========================
-   DOWNLOAD
-========================= */
-
+// DOWNLOAD
 function downloadLua(){
 let t = document.getElementById("output").value
 if(!t) return alert("Nada")
@@ -269,7 +213,7 @@ if(!t) return alert("Nada")
 let blob = new Blob([t], {type:"text/plain"})
 let a = document.createElement("a")
 a.href = URL.createObjectURL(blob)
-a.download = "CHAULIMCOMMUNITY_protegido.lua"
+a.download = "CHAULIM_protegido.lua"
 a.click()
 }
 
