@@ -1,223 +1,293 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>CHAULIM COMMUNITY</title>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
-
-body{
-background:linear-gradient(135deg,#0f0f0f,#1a1a1a);
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-color:white;
-}
-
-.container{
-width:850px;
-background:#111;
-border-radius:12px;
-box-shadow:0 0 40px rgba(255,0,60,0.25);
-padding:20px;
-}
-
-h1{
-text-align:center;
-margin-bottom:20px;
-color:#ff003c;
-}
-
-textarea{
-width:100%;
-height:150px;
-background:#1e1e1e;
-border:none;
-color:white;
-padding:10px;
-border-radius:8px;
-margin-bottom:10px;
-resize:none;
-}
-
-.buttons{
-display:flex;
-gap:10px;
-}
-
-button{
-flex:1;
-padding:12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold;
-}
-
-.obf{background:#ff003c;}
-.copy{background:#0099ff;}
-.download{background:#00c77a;}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAULIMCOMMUNITY • Obfuscator & Deobfuscator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        * { font-family: 'Inter', system-ui, sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(15, 15, 25, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        textarea {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .tab-active {
+            border-bottom: 3px solid #ff003c;
+            color: white;
+        }
+    </style>
 </head>
+<body class="text-white">
+    <div class="min-h-screen p-4 md:p-8">
+        <div class="max-w-7xl mx-auto">
+            
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row items-center justify-between mb-10 gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-pink-500 via-purple-600 to-violet-600 rounded-3xl flex items-center justify-center text-3xl font-bold shadow-lg">
+                        C
+                    </div>
+                    <div>
+                        <h1 class="text-4xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">CHAULIMCOMMUNITY</h1>
+                        <p class="text-gray-400 text-sm">Obfuscator & Deobfuscator</p>
+                    </div>
+                </div>
+            </div>
 
-<body>
+            <!-- Tabs -->
+            <div class="flex border-b border-zinc-700 mb-8">
+                <button onclick="switchTab(0)" id="tab0"
+                    class="tab-active px-8 py-4 text-lg font-semibold flex-1 md:flex-none flex items-center justify-center gap-2">
+                    <i class="fas fa-shield-halved"></i> OFUSCAR
+                </button>
+                <button onclick="switchTab(1)" id="tab1"
+                    class="px-8 py-4 text-lg font-semibold flex-1 md:flex-none flex items-center justify-center gap-2 text-gray-400 hover:text-white transition">
+                    <i class="fas fa-unlock"></i> DESOFUSCAR
+                </button>
+            </div>
 
-<div class="container">
+            <!-- ==================== OFUSCATOR ==================== -->
+            <div id="panel0">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Input -->
+                    <div class="glass rounded-3xl p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-5">
+                            <i class="fas fa-code text-pink-500"></i>
+                            <h2 class="text-2xl font-semibold">Código Original</h2>
+                        </div>
+                        <textarea id="input-obf" rows="16" 
+                            class="w-full bg-zinc-950 border border-zinc-700 focus:border-pink-500 rounded-2xl p-6 outline-none transition-all"
+                            placeholder="Cole seu código Lua aqui..."></textarea>
+                        
+                        <button onclick="obfuscate()" 
+                                class="mt-6 w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 py-5 rounded-2xl font-semibold text-lg flex items-center justify-center gap-3">
+                            <i class="fas fa-shield-halved"></i>
+                            OFUSCAR AGORA
+                        </button>
+                    </div>
 
-<h1>CHAULIM COMMUNITY</h1>
+                    <!-- Output -->
+                    <div class="glass rounded-3xl p-6 md:p-8">
+                        <div class="flex justify-between items-center mb-5">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-lock text-emerald-400"></i>
+                                <h2 class="text-2xl font-semibold">Código Ofuscado</h2>
+                            </div>
+                            <div class="flex gap-3">
+                                <button onclick="copyCode('output-obf')" 
+                                        class="px-5 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-2xl flex items-center gap-2">
+                                    <i class="fas fa-copy"></i> Copiar
+                                </button>
+                                <button onclick="downloadFile('output-obf')" 
+                                        class="px-5 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-2xl flex items-center gap-2">
+                                    <i class="fas fa-download"></i> Baixar
+                                </button>
+                            </div>
+                        </div>
+                        <textarea id="output-obf" rows="16" 
+                            class="w-full bg-zinc-950 border border-zinc-700 focus:border-emerald-500 rounded-2xl p-6 outline-none"
+                            placeholder="Código ofuscado aparecerá aqui..."></textarea>
+                    </div>
+                </div>
+            </div>
 
-<textarea id="input" placeholder="Cole seu código Lua..."></textarea>
+            <!-- ==================== DEOBFUSCATOR (Agora em duas colunas) ==================== -->
+            <div id="panel1" class="hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Input (Código Ofuscado) -->
+                    <div class="glass rounded-3xl p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-5">
+                            <i class="fas fa-lock text-pink-500"></i>
+                            <h2 class="text-2xl font-semibold">Código Ofuscado</h2>
+                        </div>
+                        <textarea id="input-deobf" rows="16" 
+                            class="w-full bg-zinc-950 border border-zinc-700 focus:border-pink-500 rounded-2xl p-6 outline-none transition-all"
+                            placeholder="Cole o código ofuscado aqui..."></textarea>
+                        
+                        <button onclick="deobfuscate()" 
+                                class="mt-6 w-full bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 py-5 rounded-2xl font-semibold text-lg flex items-center justify-center gap-3">
+                            <i class="fas fa-unlock"></i>
+                            DESOFUSCAR AGORA
+                        </button>
+                    </div>
 
-<div class="buttons">
-<button class="obf" onclick="obfuscate()">OFUSCAR</button>
-<button class="copy" onclick="copyCode()">COPIAR</button>
-<button class="download" onclick="downloadLua()">BAIXAR</button>
-</div>
+                    <!-- Output (Código Original) -->
+                    <div class="glass rounded-3xl p-6 md:p-8">
+                        <div class="flex justify-between items-center mb-5">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-code text-emerald-400"></i>
+                                <h2 class="text-2xl font-semibold">Código Original</h2>
+                            </div>
+                            <div class="flex gap-3">
+                                <button onclick="copyCode('output-deobf')" 
+                                        class="px-5 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-2xl flex items-center gap-2">
+                                    <i class="fas fa-copy"></i> Copiar
+                                </button>
+                                <button onclick="downloadFile('output-deobf')" 
+                                        class="px-5 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-2xl flex items-center gap-2">
+                                    <i class="fas fa-download"></i> Baixar
+                                </button>
+                            </div>
+                        </div>
+                        <textarea id="output-deobf" rows="16" 
+                            class="w-full bg-zinc-950 border border-zinc-700 focus:border-emerald-500 rounded-2xl p-6 outline-none"
+                            placeholder="Código original recuperado aparecerá aqui..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<textarea id="output" placeholder="Código protegido..."></textarea>
+    <script>
+        // Tabs
+        function switchTab(tab) {
+            document.getElementById('panel0').classList.toggle('hidden', tab !== 0);
+            document.getElementById('panel1').classList.toggle('hidden', tab !== 1);
+            
+            document.getElementById('tab0').classList.toggle('tab-active', tab === 0);
+            document.getElementById('tab1').classList.toggle('tab-active', tab === 1);
+        }
 
-</div>
+        // ==================== OFUSCATOR ====================
+        function rand() {
+            let c = "abcdefghijklmnopqrstuvwxyz";
+            let n = "_ch_";
+            for(let i = 0; i < 12; i++) n += c[Math.floor(Math.random() * c.length)];
+            return n;
+        }
 
-<script>
+        function b64(s) { return btoa(unescape(encodeURIComponent(s))); }
+        function rev(s) { return s.split("").reverse().join(""); }
+        function shift(s) {
+            let r = "";
+            for(let i = 0; i < s.length; i++) r += String.fromCharCode(s.charCodeAt(i) + 2);
+            return r;
+        }
+        function toBytes(s) {
+            let a = [];
+            for(let i = 0; i < s.length; i++) a.push(s.charCodeAt(i));
+            return a;
+        }
 
-// RANDOM NAME
-function rand(){
-let c="abcdefghijklmnopqrstuvwxyz"
-let n="_"
-for(let i=0;i<10;i++){
-n+=c[Math.floor(Math.random()*c.length)]
-}
-return n
-}
+        function obfuscate() {
+            let code = document.getElementById("input-obf").value.trim();
+            if (!code) return alert("❌ Cole um código Lua primeiro!");
 
-// BASE64
-function b64(s){
-return btoa(unescape(encodeURIComponent(s)))
-}
+            let c1 = b64(code);
+            let c2 = rev(c1);
+            let c3 = shift(c2);
+            let bytes = toBytes(c3);
 
-// REVERSE
-function rev(s){
-return s.split("").reverse().join("")
-}
+            let v = rand(), f1 = rand(), f2 = rand(), f3 = rand(), exec = rand();
 
-// SHIFT CHAR
-function shift(s){
-let r=""
-for(let i=0;i<s.length;i++){
-r+=String.fromCharCode(s.charCodeAt(i)+2)
-}
-return r
-}
-
-// BYTES
-function toBytes(s){
-let a=[]
-for(let i=0;i<s.length;i++){
-a.push(s.charCodeAt(i))
-}
-return a
-}
-
-function obfuscate(){
-
-let code = document.getElementById("input").value
-if(!code) return alert("Cola algo!")
-
-// CAMADAS
-let c1 = b64(code)       // base64
-let c2 = rev(c1)         // reverse
-let c3 = shift(c2)       // shift
-let bytes = toBytes(c3)  // bytes
-
-// NOMES RANDOM
-let v = rand()
-let f1 = rand()
-let f2 = rand()
-let f3 = rand()
-let exec = rand()
-
-let lua = `
-local ${v}={${bytes.join(",")}}
+            let lua = `local ${v} = {${bytes.join(",")}}
 
 local function ${f1}(t)
- local s=""
- for i=1,#t do s=s..string.char(t[i]) end
- return s
+    local s = ""
+    for i = 1, #t do s = s .. string.char(t[i]) end
+    return s
 end
 
 local function ${f2}(s)
- local r=""
- for i=1,#s do r=r..string.char(s:byte(i)-2) end
- return r
+    local r = ""
+    for i = 1, #s do r = r .. string.char(s:byte(i) - 2) end
+    return r
 end
 
 local function ${f3}(s)
- return s:reverse()
+    return s:reverse()
 end
-
-local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
 
 local function b64d(data)
- data = string.gsub(data, '[^'..b..'=]', '')
- return (data:gsub('.', function(x)
-  if x == '=' then return '' end
-  local r,f='',(b:find(x)-1)
-  for i=6,1,-1 do
-   r = r .. (f%2^i - f%2^(i-1) > 0 and '1' or '0')
-  end
-  return r
- end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
-  if #x ~= 8 then return '' end
-  local c=0
-  for i=1,8 do
-   c = c + (x:sub(i,i)=='1' and 2^(8-i) or 0)
-  end
-  return string.char(c)
- end))
+    local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+    data = data:gsub('[^'..b..'=]', '')
+    return (data:gsub('.', function(x)
+        if x == '=' then return '' end
+        local r, f = '', (b:find(x)-1)
+        for i = 6, 1, -1 do
+            r = r .. (f % (2^i) - f % (2^(i-1)) > 0 and '1' or '0')
+        end
+        return r
+    end):gsub('%d%d%d%d%d%d%d%d', function(x)
+        local c = 0
+        for i = 1, 8 do
+            c = c + (x:sub(i,i) == '1' and 2^(8-i) or 0)
+        end
+        return string.char(c)
+    end))
 end
 
-local ok,err = pcall(function()
-
- local s=${f1}(${v})
- s=${f2}(s)
- s=${f3}(s)
- s=b64d(s)
-
- local ${exec}=load(s)
- if ${exec} then ${exec}() end
-
+local ok, err = pcall(function()
+    local s = ${f1}(${v})
+    s = ${f2}(s)
+    s = ${f3}(s)
+    s = b64d(s)
+    local ${exec} = load(s)
+    if ${exec} then ${exec}() end
 end)
 
-if not ok then print("CHAULIM ERROR: "..tostring(err)) end
-`
+if not ok then print("CHAULIMCOMMUNITY ERROR: " .. tostring(err)) end`;
 
-document.getElementById("output").value = lua
-}
+            document.getElementById("output-obf").value = lua.trim();
+        }
 
-// COPY
-function copyCode(){
-let t = document.getElementById("output").value
-if(!t) return alert("Nada")
-navigator.clipboard.writeText(t)
-alert("Copiado!")
-}
+        // ==================== DEOBFUSCATOR ====================
+        function deobfuscate() {
+            let input = document.getElementById("input-deobf").value.trim();
+            if (!input) return alert("❌ Cole o código ofuscado!");
 
-// DOWNLOAD
-function downloadLua(){
-let t = document.getElementById("output").value
-if(!t) return alert("Nada")
+            try {
+                const byteMatch = input.match(/local _ch_[a-z]+ = \{(.+?)\}/s);
+                if (!byteMatch) return alert("❌ Formato inválido! Cole o código completo gerado pelo ofuscador.");
 
-let blob = new Blob([t], {type:"text/plain"})
-let a = document.createElement("a")
-a.href = URL.createObjectURL(blob)
-a.download = "CHAULIM_protegido.lua"
-a.click()
-}
+                const bytes = byteMatch[1].trim().split(',').map(n => parseInt(n.trim()));
+                let encoded = bytes.map(b => String.fromCharCode(b)).join("");
 
-</script>
+                let unshifted = "";
+                for (let i = 0; i < encoded.length; i++) {
+                    unshifted += String.fromCharCode(encoded.charCodeAt(i) - 2);
+                }
 
+                let reversed = unshifted.split("").reverse().join("");
+                let original = decodeURIComponent(escape(atob(reversed)));
+
+                document.getElementById("output-deobf").value = original;
+                alert("✅ Código recuperado com sucesso!");
+            } catch (e) {
+                alert("❌ Erro ao desofuscar:\n" + e.message);
+            }
+        }
+
+        // ==================== UTILITÁRIOS ====================
+        function copyCode(id) {
+            const text = document.getElementById(id).value;
+            if (!text) return alert("Nada para copiar!");
+            navigator.clipboard.writeText(text).then(() => alert("✅ Copiado com sucesso!"));
+        }
+
+        function downloadFile(id) {
+            const text = document.getElementById(id).value;
+            if (!text) return alert("Nada para baixar!");
+            const blob = new Blob([text], {type: "text/plain"});
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = id.includes("obf") ? "CHAULIMCOMMUNITY_protegido.lua" : "CHAULIMCOMMUNITY_recuperado.lua";
+            a.click();
+        }
+    </script>
 </body>
 </html>
