@@ -3251,19 +3251,7 @@
             ${v.forma === 'fiado' ? `<strong>PRAZO PARA PAGAMENTO:</strong> ${formatarData(v.prazo)}<br>` : ''}
             ${v.pago > 0 ? `<strong>VALOR JÁ PAGO:</strong> ${formatarMoeda(v.pago)}<br>` : ''}
             <strong>VALOR A PAGAR:</strong> ${formatarMoeda(v.valorDevido)}
-          </div>
-          <div style="margin:16px 0 8px;font-size:11px;">
-            Declaro que recebi os produtos acima relacionados e estou ciente do valor e do prazo de pagamento informado.
-          </div>
-          <div style="margin-top:30px;">
-            <div style="border-top:1px solid #000;width:70%;margin:0 auto;text-align:center;padding-top:4px;font-size:11px;">
-              ASSINATURA DO CLIENTE<br>Nome: ${v.clienteNome || '______________________________'}
-            </div>
-          </div>
-          <div style="margin-top:30px;">
-            <div style="border-top:1px solid #000;width:70%;margin:0 auto;text-align:center;padding-top:4px;font-size:11px;">
-              RESPONSÁVEL PELA VENDA
-            </div>
+
           </div>
           <div style="text-align:center;margin-top:20px;font-size:11px;">Obrigado pela preferência!</div>
         </div>
