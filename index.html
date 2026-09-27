@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CASA DOS OVOS — Controle de Estoque e Clientes</title>
+  <title>Central Dos Ovos — Controle de Estoque e Clientes</title>
   <!-- Firebase (sincronização entre computadores) -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
@@ -643,7 +643,7 @@
   <div id="tela-login">
     <div class="login-box">
       <div class="logo">
-        <h1>🥚 CASA DOS OVOS</h1>
+        <h1>🥚 Central Dos Ovos</h1>
         <p>Controle de Estoque e Clientes</p>
       </div>
       <div class="login-erro" id="login-erro"></div>
@@ -658,9 +658,9 @@
       <button class="btn btn-primary" onclick="fazerLogin()">Entrar</button>
       <div class="login-hint">
         <strong>Acesso padrão (Administrador):</strong><br>
-        Usuário: <code>admin</code> &nbsp;|&nbsp; Senha: <code>admin123</code>
+
         <br><br>
-        <span style="opacity:0.9;">☁️ Sincronização: configure o Firebase no código (projeto novo da Casa dos Ovos) para os dados aparecerem em todos os computadores.</span>
+        <span id="login-sync-msg" style="opacity:0.9;">☁️ Verificando sincronização…</span>
       </div>
     </div>
   </div>
@@ -670,7 +670,7 @@
 
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>🥚 CASA DOS OVOS</h1>
+      <h1>🥚 Central Dos Ovos</h1>
       <p>Controle de Estoque e Clientes</p>
     </div>
     <div class="user-info">
@@ -1450,22 +1450,29 @@
       const box = document.getElementById('sync-status');
       const txt = document.getElementById('sync-status-text');
       const icon = document.getElementById('sync-status-icon');
-      if (!box || !txt) return;
-      box.classList.remove('offline', 'pendente', 'local');
-      if (tipo === 'ok') {
-        box.classList.add('');
-        icon.textContent = '☁️';
-      } else if (tipo === 'offline') {
-        box.classList.add('offline');
-        icon.textContent = '⚠️';
-      } else if (tipo === 'pendente') {
-        box.classList.add('pendente');
-        icon.textContent = '🔄';
-      } else {
-        box.classList.add('local');
-        icon.textContent = '💾';
+      const loginMsg = document.getElementById('login-sync-msg');
+      if (box && txt && icon) {
+        box.classList.remove('offline', 'pendente', 'local');
+        if (tipo === 'ok') {
+          icon.textContent = '☁️';
+        } else if (tipo === 'offline') {
+          box.classList.add('offline');
+          icon.textContent = '⚠️';
+        } else if (tipo === 'pendente') {
+          box.classList.add('pendente');
+          icon.textContent = '🔄';
+        } else {
+          box.classList.add('local');
+          icon.textContent = '💾';
+        }
+        txt.textContent = texto;
       }
-      txt.textContent = texto;
+      if (loginMsg) {
+        if (tipo === 'ok') loginMsg.textContent = '☁️ Sincronização ativa — dados compartilhados entre os computadores.';
+        else if (tipo === 'offline') loginMsg.textContent = '⚠️ Sem conexão com a nuvem. Verifique as regras do Firebase (modo teste).';
+        else if (tipo === 'pendente') loginMsg.textContent = '🔄 Conectando à nuvem…';
+        else loginMsg.textContent = '💾 Modo local — configure o Firebase para sincronizar.';
+      }
     }
 
     function normalizarEstado(data) {
@@ -2898,7 +2905,7 @@
       area.innerHTML = `
         <div style="max-width:420px;margin:0 auto;font-family:'Courier New',monospace;font-size:13px;line-height:1.4;">
           <div style="text-align:center;margin-bottom:12px;">
-            <strong style="font-size:16px;">CASA DOS OVOS</strong><br>
+            <strong style="font-size:16px;">Central Dos Ovos</strong><br>
             <span style="font-size:12px;">NOTA DE ENTREGA</span>
           </div>
           <div style="margin-bottom:10px;">
@@ -3211,7 +3218,7 @@
       area.innerHTML = `
         <div style="max-width:420px;margin:0 auto;font-family:'Courier New',monospace;font-size:13px;line-height:1.4;">
           <div style="text-align:center;margin-bottom:12px;">
-            <strong style="font-size:16px;">CASA DOS OVOS</strong><br>
+            <strong style="font-size:16px;">Central Dos Ovos</strong><br>
             <span style="font-size:12px;">COMPROVANTE DE VENDA</span>
           </div>
           <div style="margin-bottom:10px;">
