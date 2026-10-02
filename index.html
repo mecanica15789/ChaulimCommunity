@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Central Dos Ovos — Controle de Estoque e Clientes</title>
+  <title>CASA DOS OVOS — Controle de Estoque e Clientes</title>
   <!-- Firebase (sincronização entre computadores) -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
@@ -643,7 +643,7 @@
   <div id="tela-login">
     <div class="login-box">
       <div class="logo">
-        <h1>🥚 Central Dos Ovos</h1>
+        <h1>🥚 CASA DOS OVOS</h1>
         <p>Controle de Estoque e Clientes</p>
       </div>
       <div class="login-erro" id="login-erro"></div>
@@ -670,7 +670,7 @@
 
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>🥚 Central Dos Ovos</h1>
+      <h1>🥚 CASA DOS OVOS</h1>
       <p>Controle de Estoque e Clientes</p>
     </div>
     <div class="user-info">
@@ -687,6 +687,7 @@
       <button class="nav-btn admin-menu" data-page="notificacoes">🔔 Notificações <span class="badge hidden" id="badge-notif">0</span></button>
       <button class="nav-btn venda-menu" data-page="venda">🛒 Nova Venda</button>
       <button class="nav-btn entrega-menu" data-page="entregas">🚚 Entregas <span class="badge hidden" id="badge-entregas">0</span></button>
+      <button class="nav-btn admin-menu admin-only" data-page="mensal">📈 Resumo Mensal</button>
       <button class="nav-btn admin-menu admin-only" data-page="logs">📜 Logs</button>
       <button class="nav-btn admin-menu admin-only" data-page="usuarios">👤 Usuários</button>
     </nav>
@@ -737,7 +738,7 @@
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Produto</th><th>Preço Unit.</th><th>Estoque</th><th>Mínimo</th><th>Status</th><th>Ações</th></tr>
+                <tr><th>Produto</th><th>Venda</th><th>Compra</th><th>Lucro un.</th><th>Estoque</th><th>Mínimo</th><th>Status</th><th>Ações</th></tr>
               </thead>
               <tbody id="lista-produtos"></tbody>
             </table>
@@ -1062,6 +1063,56 @@
         </div>
       </section>
 
+      <!-- RESUMO MENSAL (admin only) -->
+      <section id="page-mensal" class="page hidden">
+        <div class="stats-grid" style="margin-bottom:1.25rem;">
+          <div class="stat-card">
+            <div class="label">Total vendido (mês)</div>
+            <div class="value" id="mensal-total">R$ 0,00</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Custo dos produtos</div>
+            <div class="value" id="mensal-custo">R$ 0,00</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Lucro do mês</div>
+            <div class="value" id="mensal-lucro" style="color:var(--success);">R$ 0,00</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Qtd. de vendas</div>
+            <div class="value" id="mensal-qtd">0</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3>📈 Resumo Mensal</h3>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-danger" onclick="zerarMesAtual()">🧹 Zerar mês atual</button>
+            </div>
+          </div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;" id="mensal-periodo">Período: —</p>
+          <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;">
+            O lucro usa o <strong>valor de compra</strong> cadastrado em cada produto. Ao zerar o mês, o total e o lucro vão para o histórico abaixo e o contador do mês recomeça.
+          </p>
+          <h4 style="margin:0.5rem 0 0.75rem;font-size:0.95rem;">Histórico de meses zerados</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mês</th>
+                  <th>Total vendido</th>
+                  <th>Custo</th>
+                  <th>Lucro</th>
+                  <th>Vendas</th>
+                  <th>Zerado em</th>
+                </tr>
+              </thead>
+              <tbody id="lista-historico-mensal"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <!-- LOGS (admin only) -->
       <section id="page-logs" class="page hidden">
         <div class="panel">
@@ -1115,7 +1166,7 @@
         <div class="panel">
           <div class="panel-header"><h3>ℹ️ Permissões</h3></div>
           <div style="font-size:0.88rem;line-height:1.7;color:var(--text-muted);">
-            <p><strong style="color:var(--primary-dark);">Administrador:</strong> acesso total — dashboard, produtos, estoque, clientes, fiado, histórico de vendas, entregas, notificações, vendas, <strong>logs de atividades</strong> e usuários.</p>
+            <p><strong style="color:var(--primary-dark);">Administrador:</strong> acesso total — dashboard, produtos, estoque, clientes, fiado, histórico, entregas, notificações, <strong>resumo mensal (vendas e lucro)</strong>, logs e usuários.</p>
             <p style="margin-top:0.5rem;"><strong style="color:var(--primary-dark);">Vendedor:</strong> <strong>Nova Venda</strong> e <strong>Fiado</strong>. Pode marcar dívidas como pagas. Todas as ações ficam no log do admin.</p>
             <p style="margin-top:0.5rem;"><strong style="color:var(--primary-dark);">Entregador:</strong> vê <em>apenas</em> a tela de <strong>Entregas</strong>. Emite nota de entrega e marca como entregue.</p>
           </div>
@@ -1141,8 +1192,12 @@
             <input type="text" id="produto-nome" placeholder="Ex: Ovos Brancos, Ovos Caipira, Ovos de Codorna..." />
           </div>
           <div class="form-group">
-            <label>Preço Unitário (R$) *</label>
-            <input type="number" id="produto-preco" min="0" step="0.01" value="0" />
+            <label>Valor de venda (R$) *</label>
+            <input type="number" id="produto-preco" min="0" step="0.01" value="0" placeholder="Quanto vende" />
+          </div>
+          <div class="form-group">
+            <label>Valor de compra (R$) *</label>
+            <input type="number" id="produto-custo" min="0" step="0.01" value="0" placeholder="Quanto pagou" />
           </div>
           <div class="form-group">
             <label>Estoque Inicial</label>
@@ -1317,6 +1372,8 @@
       usuarios: [],
       vendas: [],
       logs: [],
+      historicoMensal: [],
+      ultimoZeroMensal: 0,
       ultimaVenda: null
     };
 
@@ -1478,12 +1535,20 @@
     function normalizarEstado(data) {
       const base = {
         produtos: [], clientes: [], dividas: [], movimentacoes: [],
-        usuarios: [], vendas: [], logs: [], ultimaVenda: null
+        usuarios: [], vendas: [], logs: [], historicoMensal: [],
+        ultimoZeroMensal: 0, ultimaVenda: null
       };
       const e = { ...base, ...(data || {}) };
-      ['produtos','clientes','dividas','movimentacoes','usuarios','vendas','logs'].forEach(k => {
+      ['produtos','clientes','dividas','movimentacoes','usuarios','vendas','logs','historicoMensal'].forEach(k => {
         if (!Array.isArray(e[k])) e[k] = e[k] ? Object.values(e[k]) : [];
       });
+      if (typeof e.ultimoZeroMensal !== 'number') e.ultimoZeroMensal = Number(e.ultimoZeroMensal) || 0;
+      // Garante custo nos produtos antigos
+      e.produtos = e.produtos.map(p => ({
+        ...p,
+        custo: (p.custo != null && !isNaN(p.custo)) ? Number(p.custo) : 0,
+        preco: Number(p.preco) || 0
+      }));
       if (!e.usuarios.length) {
         e.usuarios = [{
           id: 'admin-default',
@@ -1792,7 +1857,7 @@
           toast('Acesso restrito. Você só pode ver entregas.', 'error');
           return;
         }
-        if ((page === 'produtos' || page === 'usuarios' || page === 'logs') && !isAdmin()) {
+        if ((page === 'produtos' || page === 'usuarios' || page === 'logs' || page === 'mensal') && !isAdmin()) {
           toast('Acesso restrito ao administrador', 'error');
           return;
         }
@@ -1812,6 +1877,7 @@
           notificacoes: 'Notificações',
           venda: 'Nova Venda',
           entregas: 'Entregas',
+          mensal: 'Resumo Mensal',
           logs: 'Logs de Atividades',
           usuarios: 'Usuários'
         };
@@ -1828,6 +1894,7 @@
         if (page === 'vendas') renderVendasLog();
         if (page === 'notificacoes') renderNotificacoes();
         if (page === 'entregas') renderEntregas();
+        if (page === 'mensal') renderResumoMensal();
         if (page === 'logs') renderLogs();
         if (page === 'venda') {
           preencherSelectClientes();
@@ -1971,6 +2038,7 @@
         if (!p) return;
         document.getElementById('produto-nome').value = p.nome;
         document.getElementById('produto-preco').value = p.preco;
+        document.getElementById('produto-custo').value = p.custo != null ? p.custo : 0;
         document.getElementById('produto-estoque').value = p.estoque;
         document.getElementById('produto-minimo').value = p.minimo;
         document.getElementById('produto-unidade').value = p.unidade || '';
@@ -1978,6 +2046,7 @@
       } else {
         document.getElementById('produto-nome').value = '';
         document.getElementById('produto-preco').value = '0';
+        document.getElementById('produto-custo').value = '0';
         document.getElementById('produto-estoque').value = '0';
         document.getElementById('produto-minimo').value = '5';
         document.getElementById('produto-unidade').value = '';
@@ -1993,20 +2062,26 @@
       const id = document.getElementById('produto-id').value;
       const nome = document.getElementById('produto-nome').value.trim();
       const preco = parseFloat(document.getElementById('produto-preco').value);
+      const custo = parseFloat(document.getElementById('produto-custo').value);
       const estoque = parseInt(document.getElementById('produto-estoque').value, 10) || 0;
       const minimo = parseInt(document.getElementById('produto-minimo').value, 10) || 0;
       const unidade = document.getElementById('produto-unidade').value.trim();
 
       if (!nome) { toast('Nome é obrigatório', 'error'); return; }
-      if (isNaN(preco) || preco < 0) { toast('Preço inválido', 'error'); return; }
+      if (isNaN(preco) || preco < 0) { toast('Valor de venda inválido', 'error'); return; }
+      if (isNaN(custo) || custo < 0) { toast('Valor de compra inválido', 'error'); return; }
 
       if (id) {
         const p = getProduto(id);
-        if (p) { p.nome = nome; p.preco = preco; p.minimo = minimo; p.unidade = unidade; }
+        if (p) { p.nome = nome; p.preco = preco; p.custo = custo; p.minimo = minimo; p.unidade = unidade; }
       } else {
-        estado.produtos.push({ id: uid(), nome, preco, estoque, minimo, unidade });
+        estado.produtos.push({ id: uid(), nome, preco, custo, estoque, minimo, unidade });
       }
-      registrarLog(id ? 'Editar produto' : 'Cadastrar produto', nome + ' · ' + formatarMoeda(preco), 'estoque');
+      registrarLog(
+        id ? 'Editar produto' : 'Cadastrar produto',
+        nome + ' · venda ' + formatarMoeda(preco) + ' · compra ' + formatarMoeda(custo),
+        'estoque'
+      );
       salvar();
       fecharModalProduto();
       renderProdutos();
@@ -2036,15 +2111,19 @@
       if (busca) lista = lista.filter(p => p.nome.toLowerCase().includes(busca));
       const tbody = document.getElementById('lista-produtos');
       if (lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty"><div class="icon">📦</div>Nenhum produto cadastrado.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="empty"><div class="icon">📦</div>Nenhum produto cadastrado.</td></tr>';
         return;
       }
       tbody.innerHTML = lista.map(p => {
         const baixo = p.estoque <= p.minimo;
+        const custo = Number(p.custo) || 0;
+        const lucroUn = (Number(p.preco) || 0) - custo;
         return `
           <tr>
             <td><strong>${p.nome}</strong>${p.unidade ? ` <small style="color:var(--text-muted)">(${p.unidade})</small>` : ''}</td>
             <td>${formatarMoeda(p.preco)}</td>
+            <td>${formatarMoeda(custo)}</td>
+            <td style="color:${lucroUn >= 0 ? 'var(--success)' : 'var(--danger)'};font-weight:600;">${formatarMoeda(lucroUn)}</td>
             <td class="${baixo ? 'stock-low' : ''}">${p.estoque}</td>
             <td>${p.minimo}</td>
             <td><span class="status ${baixo ? 'baixo' : 'ok'}">${baixo ? 'Baixo' : 'OK'}</span></td>
@@ -2408,14 +2487,16 @@
         return;
       }
 
+      const custoUnit = Number(p.custo) || 0;
       const existente = carrinho.find(i => i.produtoId === produtoId && i.precoUnit === preco);
       if (existente) {
         existente.qtd += qtd;
         existente.total = existente.qtd * existente.precoUnit;
+        existente.custoUnit = custoUnit;
       } else {
         carrinho.push({
           produtoId, nome: p.nome, unidade: p.unidade || '',
-          qtd, precoUnit: preco, total: qtd * preco
+          qtd, precoUnit: preco, custoUnit, total: qtd * preco
         });
       }
       document.getElementById('cart-qtd').value = 1;
@@ -2546,6 +2627,11 @@
 
       const total = carrinho.reduce((s, i) => s + i.total, 0);
       const valorDevido = Math.max(0, total - pago);
+      const custoTotal = carrinho.reduce((s, i) => {
+        const cu = (i.custoUnit != null) ? Number(i.custoUnit) : (Number(getProduto(i.produtoId)?.custo) || 0);
+        return s + cu * i.qtd;
+      }, 0);
+      const lucro = total - custoTotal;
 
       carrinho.forEach(item => {
         const p = getProduto(item.produtoId);
@@ -2563,11 +2649,15 @@
         clienteNome,
         clienteTelefone,
         clienteEndereco,
-        itens: carrinho.map(i => ({ ...i })),
-        total, pago, valorDevido, forma,
+        itens: carrinho.map(i => ({
+          ...i,
+          custoUnit: (i.custoUnit != null) ? Number(i.custoUnit) : (Number(getProduto(i.produtoId)?.custo) || 0)
+        })),
+        total, custoTotal, lucro, pago, valorDevido, forma,
         prazo: forma === 'fiado' ? prazo : null,
         data: hoje(),
         hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        timestamp: Date.now(),
         vendedor: usuarioAtual ? usuarioAtual.nome : '—',
         precisaEntrega,
         entregaEndereco: precisaEntrega ? entregaEndereco : null,
@@ -2623,6 +2713,129 @@
       } else {
         toast('Venda finalizada com sucesso!', 'success');
       }
+    }
+
+    // ===================== RESUMO MENSAL (admin) =====================
+    function getVendasMesAtual() {
+      const agora = new Date();
+      const ultimoZero = Number(estado.ultimoZeroMensal) || 0;
+      return (estado.vendas || []).filter(v => {
+        let ts = v.timestamp;
+        if (!ts && v.data) {
+          // fallback para vendas antigas sem timestamp
+          ts = new Date(v.data + 'T12:00:00').getTime();
+        }
+        if (!ts) return false;
+        const d = new Date(ts);
+        return ts > ultimoZero &&
+          d.getFullYear() === agora.getFullYear() &&
+          d.getMonth() === agora.getMonth();
+      });
+    }
+
+    function calcularLucroVenda(v) {
+      if (v.lucro != null && !isNaN(v.lucro)) return Number(v.lucro);
+      // Recalcula a partir dos itens se necessário
+      const itens = v.itens || [];
+      let custo = 0;
+      itens.forEach(i => {
+        let cu = i.custoUnit;
+        if (cu == null) {
+          const p = getProduto(i.produtoId);
+          cu = p ? (Number(p.custo) || 0) : 0;
+        }
+        custo += Number(cu) * Number(i.qtd || 0);
+      });
+      return (Number(v.total) || 0) - custo;
+    }
+
+    function calcularCustoVenda(v) {
+      if (v.custoTotal != null && !isNaN(v.custoTotal)) return Number(v.custoTotal);
+      return (Number(v.total) || 0) - calcularLucroVenda(v);
+    }
+
+    function renderResumoMensal() {
+      if (!isAdmin()) return;
+      const vendasMes = getVendasMesAtual();
+      const total = vendasMes.reduce((s, v) => s + (Number(v.total) || 0), 0);
+      const custo = vendasMes.reduce((s, v) => s + calcularCustoVenda(v), 0);
+      const lucro = total - custo;
+      const agora = new Date();
+
+      const elTotal = document.getElementById('mensal-total');
+      const elCusto = document.getElementById('mensal-custo');
+      const elLucro = document.getElementById('mensal-lucro');
+      const elQtd = document.getElementById('mensal-qtd');
+      const elPeriodo = document.getElementById('mensal-periodo');
+      if (elTotal) elTotal.textContent = formatarMoeda(total);
+      if (elCusto) elCusto.textContent = formatarMoeda(custo);
+      if (elLucro) {
+        elLucro.textContent = formatarMoeda(lucro);
+        elLucro.style.color = lucro >= 0 ? 'var(--success)' : 'var(--danger)';
+      }
+      if (elQtd) elQtd.textContent = String(vendasMes.length);
+      if (elPeriodo) {
+        elPeriodo.textContent = 'Período: ' + agora.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) +
+          (estado.ultimoZeroMensal ? ' (desde o último zeramento)' : '');
+      }
+
+      const hist = Array.isArray(estado.historicoMensal) ? estado.historicoMensal : [];
+      const tbody = document.getElementById('lista-historico-mensal');
+      if (!tbody) return;
+      if (hist.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty"><div class="icon">📈</div>Nenhum mês zerado ainda.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = hist.map(h => `
+        <tr>
+          <td><strong>${h.mesNome || '—'}</strong></td>
+          <td>${formatarMoeda(h.total)}</td>
+          <td>${formatarMoeda(h.custo != null ? h.custo : (h.total - h.lucro))}</td>
+          <td style="color:var(--success);font-weight:600;">${formatarMoeda(h.lucro)}</td>
+          <td>${h.qtdVendas != null ? h.qtdVendas : '—'}</td>
+          <td>${h.dataZero ? new Date(h.dataZero).toLocaleString('pt-BR') : '—'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function zerarMesAtual() {
+      if (!isAdmin()) return;
+      const vendasMes = getVendasMesAtual();
+      const total = vendasMes.reduce((s, v) => s + (Number(v.total) || 0), 0);
+      const custo = vendasMes.reduce((s, v) => s + calcularCustoVenda(v), 0);
+      const lucro = total - custo;
+      if (total === 0 && vendasMes.length === 0) {
+        toast('Não há vendas neste mês para zerar.', 'error');
+        return;
+      }
+      if (!confirm(
+        'Zerar o mês atual?\n\n' +
+        'Total vendido: ' + formatarMoeda(total) + '\n' +
+        'Custo: ' + formatarMoeda(custo) + '\n' +
+        'Lucro: ' + formatarMoeda(lucro) + '\n\n' +
+        'Os valores vão para o histórico e o contador do mês recomeça.'
+      )) return;
+
+      const agora = new Date();
+      if (!Array.isArray(estado.historicoMensal)) estado.historicoMensal = [];
+      estado.historicoMensal.unshift({
+        id: uid(),
+        mesNome: agora.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }),
+        total,
+        custo,
+        lucro,
+        qtdVendas: vendasMes.length,
+        dataZero: agora.toISOString()
+      });
+      estado.ultimoZeroMensal = Date.now();
+      registrarLog(
+        'Zerou mês',
+        'Total ' + formatarMoeda(total) + ' · Lucro ' + formatarMoeda(lucro),
+        'venda'
+      );
+      salvar();
+      renderResumoMensal();
+      toast('Mês zerado e salvo no histórico!', 'success');
     }
 
     // ===================== LOG / HISTÓRICO DE VENDAS =====================
@@ -2905,7 +3118,7 @@
       area.innerHTML = `
         <div style="max-width:420px;margin:0 auto;font-family:'Courier New',monospace;font-size:13px;line-height:1.4;">
           <div style="text-align:center;margin-bottom:12px;">
-            <strong style="font-size:16px;">Central Dos Ovos</strong><br>
+            <strong style="font-size:16px;">CASA DOS OVOS</strong><br>
             <span style="font-size:12px;">NOTA DE ENTREGA</span>
           </div>
           <div style="margin-bottom:10px;">
@@ -3218,7 +3431,7 @@
       area.innerHTML = `
         <div style="max-width:420px;margin:0 auto;font-family:'Courier New',monospace;font-size:13px;line-height:1.4;">
           <div style="text-align:center;margin-bottom:12px;">
-            <strong style="font-size:16px;">Central Dos Ovos</strong><br>
+            <strong style="font-size:16px;">CASA DOS OVOS</strong><br>
             <span style="font-size:12px;">COMPROVANTE DE VENDA</span>
           </div>
           <div style="margin-bottom:10px;">
@@ -3251,7 +3464,19 @@
             ${v.forma === 'fiado' ? `<strong>PRAZO PARA PAGAMENTO:</strong> ${formatarData(v.prazo)}<br>` : ''}
             ${v.pago > 0 ? `<strong>VALOR JÁ PAGO:</strong> ${formatarMoeda(v.pago)}<br>` : ''}
             <strong>VALOR A PAGAR:</strong> ${formatarMoeda(v.valorDevido)}
-
+          </div>
+          <div style="margin:16px 0 8px;font-size:11px;">
+            Declaro que recebi os produtos acima relacionados e estou ciente do valor e do prazo de pagamento informado.
+          </div>
+          <div style="margin-top:30px;">
+            <div style="border-top:1px solid #000;width:70%;margin:0 auto;text-align:center;padding-top:4px;font-size:11px;">
+              ASSINATURA DO CLIENTE<br>Nome: ${v.clienteNome || '______________________________'}
+            </div>
+          </div>
+          <div style="margin-top:30px;">
+            <div style="border-top:1px solid #000;width:70%;margin:0 auto;text-align:center;padding-top:4px;font-size:11px;">
+              RESPONSÁVEL PELA VENDA
+            </div>
           </div>
           <div style="text-align:center;margin-top:20px;font-size:11px;">Obrigado pela preferência!</div>
         </div>
