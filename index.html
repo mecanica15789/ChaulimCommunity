@@ -658,7 +658,7 @@
       <button class="btn btn-primary" onclick="fazerLogin()">Entrar</button>
       <div class="login-hint">
         <strong>Acesso padrão (Administrador):</strong><br>
-
+        Usuário: <code>admin</code> &nbsp;|&nbsp; Senha: <code>admin123</code>
         <br><br>
         <span id="login-sync-msg" style="opacity:0.9;">☁️ Verificando sincronização…</span>
       </div>
@@ -887,8 +887,13 @@
                 <div class="search-box" style="flex:1;min-width:200px;max-width:100%;">
                   <input type="text" id="venda-busca-cliente" placeholder="Pesquisar cliente por nome ou telefone..." oninput="filtrarClientesVenda()" autocomplete="off" />
                 </div>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="selecionarClienteAvulso()">👤 Cliente não cadastrado</button>
+                <button type="button" class="btn btn-primary" onclick="selecionarClienteAvulso()" style="white-space:nowrap;">
+                  👤 Cliente não cadastrado
+                </button>
               </div>
+              <p style="font-size:0.78rem;color:var(--text-muted);margin:0.35rem 0 0;">
+                Use o botão acima para vender sem cadastro (só nome e dados básicos).
+              </p>
               <select id="venda-cliente" size="5" style="width:100%;margin-top:0.45rem;min-height:120px;" onchange="onClienteVendaChange()">
                 <option value="">— Digite acima para buscar ou selecione —</option>
               </select>
@@ -2932,13 +2937,75 @@
 
     function excluirVendaLog(id) {
       if (!isAdmin()) return;
-      if (!confirm('Excluir este registro do histórico? O estoque NÃO será devolvido.')) return;
       const v = (estado.vendas || []).find(x => x.id === id);
+      if (!v) return;
+
+      const itensResumo = (v.itens || []).map(i => i.nome + ' x' + i.qtd).join(', ');
+      if (!confirm(
+        'Excluir esta venda do histórico?\n\n' +
+        'Cliente: ' + (v.clienteNome || '—') + '\n' +
+        'Total: ' + formatarMoeda(v.total) + '\n' +
+        (itensResumo ? 'Itens: ' + itensResumo + '\n\n' : '\n') +
+        'As quantidades serão DEVOLVIDAS ao estoque.\n' +
+        'Dívidas de fiado ligadas a esta venda também serão removidas.'
+      )) return;
+
+      // Devolve quantidades ao estoque
+      const devolvidos = [];
+      (v.itens || []).forEach(item => {
+        const qtd = Number(item.qtd) || 0;
+        if (qtd <= 0) return;
+        let p = item.produtoId ? getProduto(item.produtoId) : null;
+        // Fallback: tenta achar pelo nome se o produto foi recriado
+        if (!p && item.nome) {
+          p = (estado.produtos || []).find(x => x.nome === item.nome);
+        }
+        if (p) {
+          p.estoque = (Number(p.estoque) || 0) + qtd;
+          estado.movimentacoes.unshift({
+            id: uid(),
+            data: hoje(),
+            produtoId: p.id,
+            produtoNome: p.nome,
+            tipo: 'entrada',
+            qtd,
+            obs: 'Estorno — exclusão da venda ' + (v.id || ''),
+            por: usuarioAtual ? usuarioAtual.nome : '—'
+          });
+          devolvidos.push(p.nome + ' +' + qtd);
+        }
+      });
+
+      // Remove dívidas geradas por esta venda
+      if (Array.isArray(estado.dividas)) {
+        estado.dividas = estado.dividas.filter(d => d.vendaId !== id);
+      }
+
+      // Remove entrega pendente se for a mesma venda
+      if (estado.ultimaVenda && estado.ultimaVenda.id === id) {
+        estado.ultimaVenda = null;
+      }
+
       estado.vendas = estado.vendas.filter(x => x.id !== id);
-      registrarLog('Excluir log de venda', v ? (v.clienteNome + ' · ' + formatarMoeda(v.total)) : id, 'venda');
+
+      registrarLog(
+        'Excluir venda (com estorno)',
+        (v.clienteNome || '') + ' · ' + formatarMoeda(v.total) +
+          (devolvidos.length ? ' · Estoque: ' + devolvidos.join(', ') : ' · (produtos não encontrados para devolver)'),
+        'venda'
+      );
       salvar();
       renderVendasLog();
-      toast('Registro excluído do histórico');
+      if (isAdmin()) {
+        try { renderDashboard(); renderFiado(); renderProdutos(); } catch (e) {}
+      }
+      atualizarBadges();
+      toast(
+        devolvidos.length
+          ? 'Venda excluída. Estoque devolvido: ' + devolvidos.join(', ')
+          : 'Venda excluída do histórico.',
+        'success'
+      );
     }
 
     // ===================== LOGS DE ATIVIDADE (admin) =====================
